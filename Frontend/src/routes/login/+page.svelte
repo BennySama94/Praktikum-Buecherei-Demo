@@ -19,7 +19,7 @@
         loading = true;
 
         try {
-            const data = await api.post<LoginResponse>('/login', { email, password });
+            const data = await api.post<LoginResponse>('/auth/login', { email, password });
             setAuth(data.token, data.user);
             goto('/dashboard');
         } catch (err: unknown) {

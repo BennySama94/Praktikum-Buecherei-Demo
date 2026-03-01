@@ -1,7 +1,7 @@
 import { authStore } from './auth.js';
 import { get } from 'svelte/store';
 
-const BASE_URL = '/api';
+const BASE_URL = '/api/v1';
 
 interface ApiError {
     status: number;
@@ -39,8 +39,9 @@ async function request<T>(method: string, path: string, body: unknown = null): P
 }
 
 export const api = {
-    get:    <T>(path: string)              => request<T>('GET',    path),
-    post:   <T>(path: string, body: unknown) => request<T>('POST',   path, body),
-    put:    <T>(path: string, body: unknown) => request<T>('PUT',    path, body),
-    delete: <T>(path: string)              => request<T>('DELETE', path),
+    get:    <T>(path: string)                        => request<T>('GET',    path),
+    post:   <T>(path: string, body: unknown)         => request<T>('POST',   path, body),
+    put:    <T>(path: string, body: unknown)         => request<T>('PUT',    path, body),
+    patch:  <T>(path: string, body: unknown = null)  => request<T>('PATCH',  path, body),
+    delete: <T>(path: string)                        => request<T>('DELETE', path),
 };

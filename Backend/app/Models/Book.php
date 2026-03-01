@@ -28,13 +28,17 @@ class Book extends Model
 
     public function getAvailableCopiesAttribute(): int
     {
+        if (isset($this->attributes['active_loans_count'])) {
+            return $this->total_copies - (int) $this->attributes['active_loans_count'];
+        }
+
         return $this->total_copies - $this->loans()->where('status', 'active')->count();
     }
 
     public function scopeWithAvailability($query)
     {
         return $query->withCount([
-            'loans as active_loans_count' => fn ($q) => $q->where('status', 'active'),
+            'loans as active_loans_count' => fn($q) => $q->where('status', 'active'),
         ]);
     }
 }

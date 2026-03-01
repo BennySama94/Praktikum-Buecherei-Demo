@@ -29,7 +29,7 @@
         loading = true;
 
         try {
-            await api.post('/register', form);
+            await api.post('/auth/register', form);
             goto('/login');
         } catch (err: unknown) {
             const apiErr = err as { errors?: typeof errors; message?: string };

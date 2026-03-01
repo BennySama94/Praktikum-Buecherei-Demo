@@ -23,9 +23,6 @@
     <div class="max-w-2xl mx-auto bg-white rounded shadow p-6">
         <div class="flex justify-between items-center mb-6">
             <h1 class="text-2xl font-bold">Bücherei</h1>
-            <button on:click={logout} class="text-sm text-red-500 hover:underline">
-                Abmelden
-            </button>
         </div>
 
         <p class="text-gray-600 mb-6">

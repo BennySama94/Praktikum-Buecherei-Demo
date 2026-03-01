@@ -46,4 +46,9 @@ class LoanPolicy
     {
         return $user->role === 'librarian';
     }
+
+    public function return(User $user, Loan $loan): bool
+    {
+        return $user->role === 'librarian' || $loan->user_id === $user->id;
+    }
 }

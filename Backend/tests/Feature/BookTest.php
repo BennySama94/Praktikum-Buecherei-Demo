@@ -27,6 +27,11 @@ it('allows a librarian to create a book', function () {
         'title'  => 'New Book',
         'author' => 'Author Name',
         'isbn'   => '978-3-000000-01-7',
+        'genre'  => 'Fiction',
+        'year'   => 2020,
+        'total_copies' => 5,
+        'available_copies' => 5,
+        'isbn'   => '978-3-000000-01-7',
     ])->assertStatus(201);
 });
 

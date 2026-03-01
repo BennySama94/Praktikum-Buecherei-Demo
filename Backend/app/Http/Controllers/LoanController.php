@@ -2,47 +2,55 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\StoreLoanRequest;
+use App\Http\Resources\LoanResource;
+use App\Models\Book;
+use App\Models\Loan;
+use App\Services\LoanService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class LoanController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function __construct(private readonly LoanService $loanService) {}
+
+    public function index(): AnonymousResourceCollection
     {
-        //
+        $this->authorize('viewAny', Loan::class);
+
+        $loans = Loan::with(['user', 'book'])->get();
+
+        return LoanResource::collection($loans);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function show(Loan $loan): LoanResource
     {
-        //
+        $this->authorize('view', $loan);
+
+        return new LoanResource($loan->load(['user', 'book']));
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function store(StoreLoanRequest $request): JsonResponse
     {
-        //
+        $book = Book::findOrFail($request->validated('book_id'));
+
+        abort_if($book->available_copies <= 0, 422, 'No copies available.');
+
+        $loan = $this->loanService->checkout($request->user(), $book);
+
+        return (new LoanResource($loan->load(['user', 'book'])))
+            ->response()
+            ->setStatusCode(201);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function return(Loan $loan): LoanResource
     {
-        //
-    }
+        $this->authorize('return', $loan);
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        abort_if($loan->status !== 'active', 422, 'Loan is not active.');
+
+        $loan = $this->loanService->returnBook($loan);
+
+        return new LoanResource($loan->load(['user', 'book']));
     }
 }

@@ -21,7 +21,7 @@ class LoanFactory extends Factory
 
     public function returned(): static
     {
-        return $this->state(fn () => [
+        return $this->state(fn() => [
             'status'      => 'returned',
             'returned_at' => now(),
         ]);
@@ -29,8 +29,8 @@ class LoanFactory extends Factory
 
     public function overdue(): static
     {
-        return $this->state(fn () => [
-            'status'   => 'overdue',
+        return $this->state(fn() => [
+            'status'   => 'active',
             'due_date' => now()->subDays(3),
         ]);
     }

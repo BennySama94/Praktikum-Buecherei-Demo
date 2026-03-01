@@ -10,10 +10,10 @@ class StoreLoanRequest extends FormRequest
     /**
      * Determine if the user is authorized to make this request.
      */
-public function authorize(): bool
-{
-    return $this->user()->can('create', Loan::class);
-}
+    public function authorize(): bool
+    {
+        return $this->user()->can('create', Loan::class);
+    }
 
     /**
      * Get the validation rules that apply to the request.
@@ -23,7 +23,6 @@ public function authorize(): bool
     public function rules(): array
     {
         return [
-            'user_id' => ['required', 'exists:users,id'],
             'book_id' => ['required', 'exists:books,id'],
         ];
     }

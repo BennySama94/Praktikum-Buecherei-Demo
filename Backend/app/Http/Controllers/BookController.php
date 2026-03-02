@@ -45,9 +45,11 @@ class BookController extends Controller
      */
     public function update(UpdateBookRequest $request, Book $book): BookResource
     {
+        $this->authorize('update', $book);
+
         $book->update($request->validated());
 
-        return new BookResource($book->fresh());
+        return new BookResource($book);
     }
 
     /**

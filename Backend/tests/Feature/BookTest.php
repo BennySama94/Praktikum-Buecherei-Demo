@@ -50,3 +50,20 @@ it('rejects book creation with missing isbn with 422', function () {
         'author' => 'Author',
     ])->assertStatus(422);
 });
+
+it('allows a librarian to update a book', function () {
+    Sanctum::actingAs(User::factory()->create(['role' => 'librarian']));
+    $book = Book::factory()->create();
+
+    $this->putJson("/api/v1/books/{$book->id}", ['title' => 'Updated', 'author' => $book->author, 'isbn' => $book->isbn, 'total_copies' => 1, 'available_copies' => 1, 'genre' => 'Fiction', 'year' => date('Y')])
+        ->assertStatus(200)
+        ->assertJsonPath('data.title', 'Updated');
+});
+
+it('prevents a member from updating a book', function () {
+    Sanctum::actingAs(User::factory()->create(['role' => 'member']));
+    $book = Book::factory()->create();
+
+    $this->putJson("/api/v1/books/{$book->id}", ['title' => 'Hacked'])
+        ->assertStatus(403);
+});

@@ -61,3 +61,32 @@ it('marks past-due active loans as overdue via markOverdue()', function () {
     expect($count)->toBe(1);
     expect($loan->fresh()->status)->toBe('overdue');
 });
+
+
+it('allows a member to view their own loans', function () {
+    $member = User::factory()->create(['role' => 'member']);
+    Sanctum::actingAs($member);
+    Loan::factory()->count(2)->create(['user_id' => $member->id]);
+    Loan::factory()->create(); // someone else's — should not appear
+
+    $this->getJson('/api/v1/loans')
+         ->assertStatus(200)
+         ->assertJsonCount(2, 'data');
+});
+
+it('prevents a member from borrowing the same book twice', function () {
+    $member = User::factory()->create(['role' => 'member']);
+    Sanctum::actingAs($member);
+    $book = Book::factory()->create(['total_copies' => 3]);
+
+    // First loan — should succeed
+    Loan::factory()->create([
+        'user_id' => $member->id,
+        'book_id' => $book->id,
+        'status'  => 'active',
+    ]);
+
+    // Second attempt — same book, same user
+    $this->postJson('/api/v1/loans', ['book_id' => $book->id])
+         ->assertStatus(422);
+});

@@ -21,6 +21,7 @@ Nutzer können Bücher ausleihen und zurückgeben; Bibliothekare verwalten den B
 ### Voraussetzungen
 - PHP 8.5.0 + Composer
 - Node.js 22.17 + npm
+- Nötige PHP-Extensions für Composer und Laravel installiert
 
 ### Setup
 
@@ -33,14 +34,15 @@ Das Skript führt folgende Schritte interaktiv durch:
 
 1. **`composer install`** - Fragt, ob PHP-Abhängigkeiten installiert werden sollen.
 2. **`.env`-Datei erstellen** - Kopiert `.env.example` nach `.env` und führt `php artisan key:generate` aus (wird übersprungen, wenn `.env` bereits existiert).
-3. **`npm install`** - Fragt, ob Node-Abhängigkeiten installiert werden sollen.
-4. **Server starten** - Öffnet zwei separate `cmd`-Fenster: eines für `php artisan serve`, eines für `npm run dev`.
+3. **Datenbank erstellen und migrieren** - Fragt, ob die Datenbank erstellt werden soll und gleichzeitig `php artisan migrate:fresh --seed --force` ausgeführt werden soll. 
+4. **`npm install`** - Fragt, ob Node-Abhängigkeiten installiert werden sollen.
+5. **Server starten** - Öffnet zwei separate `cmd`-Fenster: eines für `php artisan serve`, eines für `npm run dev`.
 
 Die App läuft dann unter:
 - **Backend:** `http://localhost:8000`
 - **Frontend:** `http://localhost:5173`
 
-> **Hinweis:** Datenbank-Migration und Seeding müssen einmalig manuell ausgeführt werden:
+> **Hinweis:** Datenbank-Migration und Seeding müssen einmalig manuell ausgeführt werden, sofern nicht via Powershell automatisch installiert:
 > ```bash
 > cd Backend
 > php artisan migrate --seed
@@ -73,6 +75,22 @@ php artisan test
 - Ausleihprozess (Ausleihe, Rückgabe, Überfälligkeit, Zugriffskontrolle)
 
 Testdatenbank: SQLite In-Memory - schnell und isoliert vom Entwicklungsstand.
+
+## Test-Logindaten
+
+Sofern das Startup-Script verwendet wurde, oder `php artisan migrate --seed` verwendet wurde, sind dies zwei feste Test-Logindaten:
+
+```
+Bibliothekar
+Email: librarian@demo.test
+Passwort: testpass
+```
+
+```
+Normaler Benutzer
+Email: member@demo.test
+Passwort: testpass
+```
 
 ---
 

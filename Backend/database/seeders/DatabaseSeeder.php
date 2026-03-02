@@ -20,7 +20,13 @@ class DatabaseSeeder extends Seeder
             'role'     => 'librarian',
         ]);
 
-        $members = User::factory()->count(5)->create([
+        User::factory()->create([
+            'email'    => 'member@demo.test',
+            'password' => bcrypt('testpass'),
+            'role'     => 'member',
+        ]);
+
+        $members = User::factory()->count(4)->create([
             'password' => bcrypt('testpass'),
             'role'     => 'member',
         ]);

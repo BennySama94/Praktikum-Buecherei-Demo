@@ -16,12 +16,15 @@ class LoanController extends Controller
 
     public function index(): AnonymousResourceCollection
     {
-        $this->authorize('viewAny', Loan::class);
+        $user = auth()->user();
 
-        $loans = Loan::with(['user', 'book'])->get();
+        $loans = $user->role === 'librarian'
+            ? Loan::with(['user', 'book'])->get()
+            : Loan::with(['user', 'book'])->where('user_id', $user->id)->get();
 
         return LoanResource::collection($loans);
     }
+
 
     public function show(Loan $loan): LoanResource
     {
@@ -34,7 +37,7 @@ class LoanController extends Controller
     {
         $book = Book::findOrFail($request->validated('book_id'));
 
-        abort_if($book->available_copies <= 0, 422, 'No copies available.');
+        abort_if($book->available_copies <= 0, 422, 'Keine Exemplare verfügbar.');
 
         $loan = $this->loanService->checkout($request->user(), $book);
 
@@ -47,7 +50,7 @@ class LoanController extends Controller
     {
         $this->authorize('return', $loan);
 
-        abort_if($loan->status !== 'active', 422, 'Loan is not active.');
+        abort_if($loan->status !== 'active', 422, 'Leihgang ist bereits zurückgegeben.');
 
         $loan = $this->loanService->returnBook($loan);
 

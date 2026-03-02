@@ -11,6 +11,13 @@ class LoanService
 {
     public function checkout(User $user, Book $book): Loan
     {
+        $alreadyLoaned = Loan::where('user_id', $user->id)
+            ->where('book_id', $book->id)
+            ->where('status', 'active')
+            ->exists();
+
+        abort_if($alreadyLoaned, 422, 'Du hast das Buch bereits ausgeliehen.');
+
         return Loan::create([
             'user_id'  => $user->id,
             'book_id'  => $book->id,
